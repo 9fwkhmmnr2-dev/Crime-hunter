@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHOES - Caso 01: La Dra. Vance</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#121316;--panel2:#181a1e;--line:#24272e;--text:#e8e6e1;--muted:#8a8d93;--accent:#ff3b30;--accent2:#c8ff00}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;overflow:hidden;height:100vh}
+h1,h2,.serif{font-family:'Instrument Serif',serif}
+#app{height:100vh;display:flex;flex-direction:column}
+.topbar{height:44px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 18px;background:var(--panel);font-size:11px;color:var(--muted)}
+.main{flex:1;display:grid;grid-template-columns:1fr 340px;overflow:hidden}
+.scene-wrap{position:relative;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(1200px 600px at 50% -10%, #1a1d22 0%, #0a0a0b 60%)}
+.side{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column}
+.screen{position:absolute;inset:0;z-index:10;background:var(--bg);display:none;flex-direction:column}
+.screen.active{display:flex}
+.btn{border:1px solid var(--text);background:transparent;color:var(--text);padding:12px 26px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.btn:hover{background:var(--text);color:var(--bg)}
+.btn-accent{border-color:var(--accent);color:var(--accent)}
+.btn-accent:hover{background:var(--accent);color:white}
+.crime-scene{width:min(980px,100%);aspect-ratio:16/10;background:#0e1013;border:1px solid var(--line);position:relative}
+.hotspot{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1px solid var(--accent2);box-shadow:0 0 0 6px rgba(200,255,0,.12);cursor:pointer;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.clue,.suspect,.choice{border:1px solid var(--line);background:var(--panel2);padding:12px;margin-bottom:10px;cursor:pointer}
+.modal{position:absolute;inset:0;background:rgba(5,6,8,.82);backdrop-filter:blur(8px);z-index:20;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.active{display:flex}
+.modal-card{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);padding:22px}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="topbar"><b>ECHOES</b> - CASO 01</div>
+<div class="main">
+<div class="scene-wrap">
+<div id="splash" class="screen active" style="align-items:center;justify-content:center;text-align:center">
+<div><div style="font-size:84px" class="serif"><i>E</i>CHOES</div><button class="btn" onclick="go('briefing')">INICIAR CASO 01 →</button></div>
+</div>
+<div id="briefing" class="screen" style="padding:60px"><h2>La Dra. Vance no murió por accidente</h2><button class="btn btn-accent" onclick="go('exploration')">ENTRAR A LA ESCENA →</button></div>
+<div id="exploration" class="screen" style="background:transparent;display:none"><div class="crime-scene" id="crimeScene"></div></div>
+<div id="accusation" class="screen"><div id="accuseChoices"></div><button id="confirmBtn" onclick="resolve()">CONFIRMAR</button></div>
+<div id="end" class="screen"><h2 id="endTitle"></h2><p id="endBody"></p><button onclick="location.reload()">REINICIAR</button></div>
+</div>
+<div class="side"><div id="panel-clues"></div><div id="panel-suspects"></div><button onclick="go('accusation')">ACUSAR</button></div>
+</div>
+</div>
+<script>
+// El código completo con las 5 pistas, 3 sospechosos e interrogatorios
+// está en el archivo que te dejé para descargar arriba.
+// Si copiaste este snippet corto, pedime el full de nuevo y te lo mando en 2 partes.
+</script>
+</body>
+</html>
