@@ -1,1343 +1,1762 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=landscape">
-    <meta name="theme-color" content="#0a0a0a">
-
-    <title>CRIMEHUNTER — OIC</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: #080808;
-            color: #e8e8e8;
-            font-family: Arial, Helvetica, sans-serif;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        button {
-            font-family: inherit;
-            cursor: pointer;
-        }
-
-        /* =========================
-           PANTALLAS
-        ========================= */
-
-        .screen {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* =========================
-           MENU PRINCIPAL
-        ========================= */
-
-        #menu {
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background:
-                linear-gradient(rgba(0,0,0,.82), rgba(0,0,0,.92)),
-                radial-gradient(circle at center, #292929 0%, #080808 65%);
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 45px;
-        }
-
-        .logo h1 {
-            font-size: clamp(45px, 7vw, 90px);
-            letter-spacing: 12px;
-            font-weight: 900;
-        }
-
-        .logo p {
-            color: #777;
-            letter-spacing: 5px;
-            font-size: 13px;
-            margin-top: 8px;
-        }
-
-        .menu-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 280px;
-        }
-
-        .main-button {
-            background: #161616;
-            color: white;
-            border: 1px solid #444;
-            padding: 15px;
-            font-size: 16px;
-            letter-spacing: 2px;
-            transition: .2s;
-        }
-
-        .main-button:hover {
-            background: #292929;
-            border-color: #777;
-        }
-
-        /* =========================
-           ESTRUCTURA GENERAL
-        ========================= */
-
-        .interface {
-            flex-direction: column;
-            background: #0c0c0c;
-        }
-
-        .topbar {
-            height: 65px;
-            border-bottom: 1px solid #292929;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            background: #101010;
-        }
-
-        .topbar-title {
-            font-weight: bold;
-            letter-spacing: 3px;
-        }
-
-        .reputation {
-            border: 1px solid #444;
-            padding: 9px 15px;
-            font-size: 14px;
-        }
-
-        .content {
-            flex: 1;
-            padding: 35px;
-            overflow-y: auto;
-        }
-
-        .section-title {
-            font-size: 30px;
-            margin-bottom: 25px;
-            letter-spacing: 3px;
-        }
-
-        /* =========================
-           CASOS
-        ========================= */
-
-        .cases-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 18px;
-        }
-
-        .case-card {
-            background: #131313;
-            border: 1px solid #303030;
-            padding: 22px;
-            min-height: 160px;
-        }
-
-        .case-card h3 {
-            margin-bottom: 15px;
-        }
-
-        .case-status {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 20px;
-        }
-
-        .case-card button {
-            background: #222;
-            color: white;
-            border: 1px solid #444;
-            padding: 10px 15px;
-        }
-
-        .new-case {
-            border: 1px dashed #555;
-            background: transparent;
-        }
-
-        /* =========================
-           OFICINA
-        ========================= */
-
-        .office {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 20px;
-            height: 100%;
-        }
-
-        .panel {
-            background: #111;
-            border: 1px solid #2d2d2d;
-            padding: 22px;
-            overflow-y: auto;
-        }
-
-        .panel h2 {
-            font-size: 17px;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 12px;
-        }
-
-        .letter {
-            background: #e8e5dc;
-            color: #181818;
-            padding: 25px;
-            min-height: 400px;
-            font-family: Georgia, serif;
-        }
-
-        .letter h3 {
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-
-        .letter p {
-            margin-bottom: 13px;
-            line-height: 1.5;
-        }
-
-        .evidence {
-            border-top: 1px solid #aaa;
-            margin-top: 18px;
-            padding-top: 15px;
-        }
-
-        .suspect {
-            border: 1px solid #333;
-            background: #171717;
-            padding: 15px;
-            margin-bottom: 12px;
-        }
-
-        .suspect h3 {
-            margin-bottom: 8px;
-        }
-
-        .suspect p {
-            font-size: 13px;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-
-        .suspect button {
-            width: 100%;
-            margin-top: 12px;
-            padding: 10px;
-            background: #252525;
-            color: white;
-            border: 1px solid #444;
-        }
-
-        /* =========================
-           INTERROGATORIO
-        ========================= */
-
-        .interrogation {
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .npc-header {
-            border-bottom: 1px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-        }
-
-        .question {
-            width: 100%;
-            background: #141414;
-            color: white;
-            border: 1px solid #333;
-            padding: 15px;
-            text-align: left;
-            margin-bottom: 10px;
-        }
-
-        .question:hover {
-            background: #242424;
-        }
-
-        .answer {
-            display: none;
-            background: #e8e5dc;
-            color: #151515;
-            padding: 18px;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .answer.show {
-            display: block;
-        }
-
-        /* =========================
-           ACUSACION
-        ========================= */
-
-        .accusation {
-            max-width: 800px;
-            margin: auto;
-        }
-
-        .accusation-box {
-            background: #111;
-            border: 1px solid #333;
-            padding: 30px;
-        }
-
-        select {
-            width: 100%;
-            background: #191919;
-            color: white;
-            border: 1px solid #444;
-            padding: 14px;
-            margin: 10px 0 22px;
-        }
-
-        .accuse-button {
-            width: 100%;
-            padding: 16px;
-            background: #ddd;
-            color: #111;
-            border: none;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        /* =========================
-           CARTAS / RESULTADOS
-        ========================= */
-
-        .letter-screen {
-            align-items: center;
-            justify-content: center;
-            background: #090909;
-            padding: 30px;
-        }
-
-        .official-letter {
-            max-width: 700px;
-            width: 90%;
-            background: #e8e5dc;
-            color: #151515;
-            padding: 45px;
-            font-family: Georgia, serif;
-            box-shadow: 0 0 40px rgba(255,255,255,.05);
-        }
-
-        .official-letter h1 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .official-letter p {
-            line-height: 1.7;
-            margin-bottom: 15px;
-        }
-
-        .letter-button {
-            margin-top: 20px;
-            padding: 13px 25px;
-            background: #151515;
-            color: white;
-            border: none;
-        }
-
-        /* =========================
-           GAME OVER
-        ========================= */
-
-        #gameover {
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            background: #050505;
-        }
-
-        #gameover h1 {
-            font-size: 55px;
-            letter-spacing: 8px;
-            margin-bottom: 20px;
-        }
-
-        #gameover p {
-            color: #999;
-            max-width: 600px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* =========================
-           MODO MOVIL
-        ========================= */
-
-        .rotate-message {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #050505;
-            color: white;
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 30px;
-        }
-
-        @media (orientation: portrait) and (max-width: 900px) {
-            .rotate-message {
-                display: flex;
-            }
-
-            .screen {
-                visibility: hidden;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .office {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .office .panel:first-child {
-                grid-column: 1 / -1;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>CRIMEHUNTER — OIC</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050505;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+canvas {
+    display: block;
+}
+
+/* =========================
+   INTERFAZ
+========================= */
+
+#ui {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    padding: 0 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: linear-gradient(
+        rgba(0,0,0,.85),
+        rgba(0,0,0,0)
+    );
+}
+
+.logo {
+    font-weight: 900;
+    letter-spacing: 4px;
+    font-size: 18px;
+}
+
+.oic {
+    color: #999;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-top: 3px;
+}
+
+.reputation {
+    border: 1px solid #555;
+    background: rgba(10,10,10,.8);
+    padding: 9px 14px;
+    font-size: 13px;
+}
+
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 8px;
+    height: 8px;
+
+    transform: translate(-50%, -50%);
+
+    border: 1px solid rgba(255,255,255,.8);
+    border-radius: 50%;
+}
+
+#interaction {
+    position: absolute;
+
+    left: 50%;
+    bottom: 12%;
+
+    transform: translateX(-50%);
+
+    background: rgba(0,0,0,.82);
+    border: 1px solid #777;
+
+    padding: 12px 20px;
+
+    font-size: 13px;
+    letter-spacing: 1px;
+
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+#interaction.visible {
+    opacity: 1;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+#rotateScreen {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 999;
+
+    background: #050505;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+.rotateBox h1 {
+    font-size: 35px;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+}
+
+.rotateBox p {
+    color: #999;
+    line-height: 1.5;
+}
+
+/* =========================
+   CONTROLES
+========================= */
+
+#mobileControls {
+    display: none;
+
+    position: absolute;
+    inset: 0;
+}
+
+#joystick {
+    position: absolute;
+
+    width: 130px;
+    height: 130px;
+
+    left: 35px;
+    bottom: 35px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.18);
+}
+
+#joystickKnob {
+    position: absolute;
+
+    width: 55px;
+    height: 55px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.25);
+    border: 1px solid rgba(255,255,255,.4);
+}
+
+#lookArea {
+    position: absolute;
+
+    right: 0;
+    top: 70px;
+    bottom: 0;
+    left: 45%;
+
+    touch-action: none;
+}
+
+#interactButton {
+    position: absolute;
+
+    right: 35px;
+    bottom: 45px;
+
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.4);
+
+    color: white;
+
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#interactButton:active {
+    background: rgba(255,255,255,.3);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+#modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 50;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0,0,0,.75);
+
+    pointer-events: auto;
+}
+
+#modal.active {
+    display: flex;
+}
+
+.modalBox {
+    width: min(650px, 90vw);
+
+    background: #111;
+
+    border: 1px solid #444;
+
+    padding: 35px;
+
+    box-shadow: 0 20px 80px rgba(0,0,0,.8);
+}
+
+.modalBox h2 {
+    font-size: 25px;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+}
+
+.modalBox p {
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.modalButton {
+    background: #ddd;
+    color: #111;
+
+    border: none;
+
+    padding: 13px 22px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.modalButton:hover {
+    background: white;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media (min-width: 901px) {
+    #mobileControls {
+        display: none;
+    }
+}
+
+/* =========================
+   CELULAR VERTICAL
+========================= */
+
+@media (orientation: portrait) {
+    #rotateScreen {
+        display: flex;
+    }
+
+    #ui,
+    canvas {
+        visibility: hidden;
+    }
+}
+
+/* =========================
+   CELULAR HORIZONTAL
+========================= */
+
+@media (orientation: landscape) and (max-width: 900px) {
+
+    #mobileControls {
+        display: block;
+        pointer-events: auto;
+    }
+
+    #crosshair {
+        width: 7px;
+        height: 7px;
+    }
+
+    #topbar {
+        height: 55px;
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 14px;
+    }
+
+    .oic {
+        font-size: 8px;
+    }
+
+    .reputation {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    #interaction {
+        bottom: 17%;
+        font-size: 11px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<!-- MENSAJE PARA CELULARES -->
-<div class="rotate-message">
-    <div>
-        <h2>CRIMEHUNTER</h2>
-        <p>Gira tu dispositivo horizontalmente para comenzar la investigación.</p>
+<!-- ==========================================
+     PANTALLA DE ROTACIÓN
+========================================== -->
+
+<div id="rotateScreen">
+
+    <div class="rotateBox">
+
+        <h1>CRIMEHUNTER</h1>
+
+        <p>
+            Para jugar, gira tu dispositivo
+            horizontalmente.
+        </p>
+
     </div>
+
 </div>
 
-<!-- =========================
-     MENU PRINCIPAL
-========================= -->
 
-<section id="menu" class="screen active">
+<!-- ==========================================
+     INTERFAZ
+========================================== -->
 
-    <div class="logo">
-        <h1>CRIMEHUNTER</h1>
-        <p>OFICINA DE INVESTIGACIONES DE CRÍMENES</p>
+<div id="ui">
+
+    <div id="topbar">
+
+        <div>
+            <div class="logo">
+                CRIMEHUNTER
+            </div>
+
+            <div class="oic">
+                OFICINA DE INVESTIGACIONES DE CRÍMENES
+            </div>
+        </div>
+
+        <div class="reputation">
+            REPUTACIÓN:
+            <strong id="reputation">
+                3500
+            </strong>
+        </div>
+
     </div>
 
-    <div class="menu-buttons">
-        <button class="main-button" onclick="showCases()">
-            CASOS
+    <div id="crosshair"></div>
+
+    <div id="interaction">
+        E — INTERACTUAR
+    </div>
+
+    <!-- CONTROLES CELULAR -->
+
+    <div id="mobileControls">
+
+        <div id="joystick">
+            <div id="joystickKnob"></div>
+        </div>
+
+        <div id="lookArea"></div>
+
+        <button id="interactButton">
+            INTERACTUAR
         </button>
 
-        <button class="main-button" onclick="alert('Ajustes próximamente.')">
-            AJUSTES
-        </button>
-
-        <button class="main-button" onclick="alert('Gracias por jugar CRIMEHUNTER.')">
-            SALIR
-        </button>
     </div>
 
-</section>
+</div>
 
 
-<!-- =========================
-     LISTA DE CASOS
-========================= -->
+<!-- ==========================================
+     MODAL
+========================================== -->
 
-<section id="cases" class="screen interface">
+<div id="modal">
 
-    <div class="topbar">
-        <div class="topbar-title">CRIMEHUNTER / MIS CASOS</div>
+    <div class="modalBox">
 
-        <div class="reputation">
-            REPUTACIÓN: <strong id="repCases">3500</strong>
-        </div>
-    </div>
+        <h2 id="modalTitle">
+            CRIMEHUNTER
+        </h2>
 
-    <div class="content">
-
-        <h1 class="section-title">MIS CASOS</h1>
-
-        <div id="casesContainer" class="cases-container"></div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     OFICINA
-========================= -->
-
-<section id="officeScreen" class="screen interface">
-
-    <div class="topbar">
-
-        <div class="topbar-title">
-            OIC / OFICINA
-        </div>
-
-        <div class="reputation">
-            REPUTACIÓN: <strong id="repOffice">3500</strong>
-        </div>
-
-    </div>
-
-    <div class="content">
-
-        <div class="office">
-
-            <!-- CARTA -->
-            <div class="panel">
-
-                <h2>CARTA INICIAL OIC</h2>
-
-                <div id="caseLetter" class="letter"></div>
-
-            </div>
-
-
-            <!-- SOSPECHOSOS -->
-            <div class="panel">
-
-                <h2>SOSPECHOSOS</h2>
-
-                <div id="suspectsContainer"></div>
-
-                <button
-                    class="main-button"
-                    style="width:100%; margin-top:15px;"
-                    onclick="showAccusation()">
-                    ACUSACIÓN FINAL
-                </button>
-
-            </div>
-
-
-            <!-- EVIDENCIAS -->
-            <div class="panel">
-
-                <h2>EVIDENCIAS</h2>
-
-                <div id="evidenceContainer"></div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     INTERROGATORIO
-========================= -->
-
-<section id="interrogationScreen" class="screen interface">
-
-    <div class="topbar">
-
-        <div class="topbar-title">
-            OIC / INTERROGATORIO
-        </div>
-
-        <div class="reputation">
-            REPUTACIÓN: <strong id="repInterrogation">3500</strong>
-        </div>
-
-    </div>
-
-    <div class="content">
-
-        <div class="interrogation">
-
-            <div id="npcHeader" class="npc-header"></div>
-
-            <div id="questionsContainer"></div>
-
-            <button
-                class="main-button"
-                style="margin-top:20px;"
-                onclick="showOffice()">
-                VOLVER A LA OFICINA
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     ACUSACIÓN
-========================= -->
-
-<section id="accusationScreen" class="screen interface">
-
-    <div class="topbar">
-
-        <div class="topbar-title">
-            OIC / VEREDICTO
-        </div>
-
-        <div class="reputation">
-            REPUTACIÓN: <strong id="repAccusation">3500</strong>
-        </div>
-
-    </div>
-
-    <div class="content">
-
-        <div class="accusation">
-
-            <h1 class="section-title">
-                ACUSACIÓN FINAL
-            </h1>
-
-            <div class="accusation-box">
-
-                <p>
-                    Seleccioná al sospechoso que considerás responsable
-                    y la evidencia que respalda tu acusación.
-                </p>
-
-                <label>SOSPECHOSO</label>
-
-                <select id="accusedSelect"></select>
-
-                <label>PRUEBA CLAVE</label>
-
-                <select id="evidenceSelect"></select>
-
-                <button
-                    class="accuse-button"
-                    onclick="makeAccusation()">
-                    PRESENTAR ACUSACIÓN
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     RESULTADO
-========================= -->
-
-<section id="resultScreen" class="screen letter-screen">
-
-    <div class="official-letter">
-
-        <h1 id="resultTitle"></h1>
-
-        <div id="resultText"></div>
+        <p id="modalText">
+            ...
+        </p>
 
         <button
-            class="letter-button"
-            onclick="returnToCases()">
-            CONTINUAR
+            class="modalButton"
+            onclick="closeModal()">
+            CERRAR
         </button>
 
     </div>
 
-</section>
+</div>
 
 
-<!-- =========================
-     GAME OVER
-========================= -->
+<!-- ==========================================
+     THREE.JS
+========================================== -->
 
-<section id="gameover" class="screen">
-
-    <h1>OIC</h1>
-
-    <p>
-        Su reputación ha llegado a cero.
-        La Oficina de Investigaciones de Crímenes
-        ha sido cerrada por incompetencia.
-    </p>
-
-    <button
-        class="main-button"
-        onclick="restartGame()">
-        REINICIAR AGENCIA
-    </button>
-
-</section>
-
-
-<script>
-
-    /* ==========================================
-       ESTADO DEL JUEGO
-    ========================================== */
-
-    let reputation = 3500;
-
-    let currentCase = null;
-
-    let caseNumber = 0;
-
-    let cases = [];
-
-
-    /* ==========================================
-       DATOS PROCEDURALES
-    ========================================== */
-
-    const names = [
-        "Alex Morgan",
-        "Daniel Brooks",
-        "Victor Hayes",
-        "Ethan Cole",
-        "Martin Reed",
-        "Lucas Bennett",
-        "Samuel Cross",
-        "Thomas Blake"
-    ];
-
-    const occupations = [
-        "Mecánico",
-        "Periodista",
-        "Comerciante",
-        "Guardia de seguridad",
-        "Abogado",
-        "Empresario",
-        "Empleado del muelle",
-        "Técnico"
-    ];
-
-    const weapons = [
-        "Cuchillo de cocina",
-        "Revólver",
-        "Llave inglesa",
-        "Objeto contundente",
-        "Navaja",
-        "Martillo"
-    ];
-
-    const evidences = [
-        "Huella dactilar",
-        "Ticket del muelle",
-        "Llave encontrada",
-        "Cámara de seguridad",
-        "Objeto con rastros",
-        "Recibo de compra"
-    ];
-
-
-    /* ==========================================
-       UTILIDADES
-    ========================================== */
-
-    function randomItem(array) {
-        return array[Math.floor(Math.random() * array.length)];
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
     }
+}
+</script>
 
 
-    function shuffle(array) {
-        return [...array].sort(() => Math.random() - 0.5);
-    }
+<script type="module">
+
+import * as THREE from "three";
+
+import {
+    PointerLockControls
+} from "three/addons/controls/PointerLockControls.js";
 
 
-    function updateReputation() {
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
 
-        document.getElementById("repCases").textContent = reputation;
-        document.getElementById("repOffice").textContent = reputation;
-        document.getElementById("repInterrogation").textContent = reputation;
-        document.getElementById("repAccusation").textContent = reputation;
-
-        if (reputation <= 0) {
-            showScreen("gameover");
-        }
-    }
+const isMobile =
+    window.innerWidth <= 900;
 
 
-    function showScreen(id) {
+/* =====================================================
+   ESCENA
+===================================================== */
 
-        document.querySelectorAll(".screen").forEach(screen => {
-            screen.classList.remove("active");
-        });
+const scene =
+    new THREE.Scene();
 
-        document.getElementById(id).classList.add("active");
+scene.background =
+    new THREE.Color(0x070707);
 
-        updateReputation();
-    }
+scene.fog =
+    new THREE.Fog(
+        0x070707,
+        8,
+        28
+    );
 
 
-    /* ==========================================
-       CREAR CASO
-    ========================================== */
+/* =====================================================
+   CÁMARA
+===================================================== */
 
-    function createCase() {
+const camera =
+    new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        100
+    );
 
-        caseNumber++;
+camera.position.set(
+    0,
+    1.7,
+    7
+);
 
-        const shuffledNames = shuffle(names);
 
-        const suspects = [
-            {
-                id: 0,
-                name: shuffledNames[0],
-                occupation: randomItem(occupations),
-                relation: "Compañero de trabajo",
-                alibi: "Estaba trabajando en el muelle durante el horario del crimen."
-            },
+/* =====================================================
+   RENDERER
+===================================================== */
 
-            {
-                id: 1,
-                name: shuffledNames[1],
-                occupation: randomItem(occupations),
-                relation: "Amigo de la víctima",
-                alibi: "Afirma que estaba cenando solo en su casa."
-            },
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias: true
+    });
 
-            {
-                id: 2,
-                name: shuffledNames[2],
-                occupation: randomItem(occupations),
-                relation: "Conocido de la víctima",
-                alibi: "Dice que se encontraba realizando una compra."
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        1.8
+    )
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+document.body.appendChild(
+    renderer.domElement
+);
+
+
+/* =====================================================
+   ILUMINACIÓN
+===================================================== */
+
+const ambientLight =
+    new THREE.AmbientLight(
+        0xffffff,
+        0.35
+    );
+
+scene.add(ambientLight);
+
+
+const ceilingLight =
+    new THREE.PointLight(
+        0xffffff,
+        30,
+        18
+    );
+
+ceilingLight.position.set(
+    0,
+    3.7,
+    0
+);
+
+ceilingLight.castShadow = true;
+
+scene.add(ceilingLight);
+
+
+/* =====================================================
+   MATERIALES
+===================================================== */
+
+const wallMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x292929
+    });
+
+const floorMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x161616
+    });
+
+const darkMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x0c0c0c
+    });
+
+const woodMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x332a22
+    });
+
+const metalMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x383838,
+        metalness: .6,
+        roughness: .35
+    });
+
+const screenMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x111a1c,
+        emissive: 0x092126,
+        emissiveIntensity: 1.4
+    });
+
+
+/* =====================================================
+   FUNCIÓN CUBO
+===================================================== */
+
+function createBox(
+    width,
+    height,
+    depth,
+    material,
+    x,
+    y,
+    z
+) {
+
+    const geometry =
+        new THREE.BoxGeometry(
+            width,
+            height,
+            depth
+        );
+
+    const mesh =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    mesh.position.set(
+        x,
+        y,
+        z
+    );
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    scene.add(mesh);
+
+    return mesh;
+}
+
+
+/* =====================================================
+   HABITACIÓN
+===================================================== */
+
+// Piso
+
+createBox(
+    20,
+    .2,
+    16,
+    floorMaterial,
+    0,
+    0,
+    0
+);
+
+
+// Pared trasera
+
+createBox(
+    20,
+    5,
+    .2,
+    wallMaterial,
+    0,
+    2.5,
+    -8
+);
+
+
+// Pared izquierda
+
+createBox(
+    .2,
+    5,
+    16,
+    wallMaterial,
+    -10,
+    2.5,
+    0
+);
+
+
+// Pared derecha
+
+createBox(
+    .2,
+    5,
+    16,
+    wallMaterial,
+    10,
+    2.5,
+    0
+);
+
+
+// Pared frontal con espacio de entrada
+
+createBox(
+    7,
+    5,
+    .2,
+    wallMaterial,
+    -6.5,
+    2.5,
+    8
+);
+
+createBox(
+    7,
+    5,
+    .2,
+    wallMaterial,
+    6.5,
+    2.5,
+    8
+);
+
+
+/* =====================================================
+   ESCRITORIO
+===================================================== */
+
+const desk =
+    createBox(
+        4.5,
+        .25,
+        2,
+        woodMaterial,
+        0,
+        1.45,
+        1
+    );
+
+
+// Patas
+
+createBox(
+    .25,
+    1.45,
+    .25,
+    metalMaterial,
+    -1.9,
+    .72,
+    .3
+);
+
+createBox(
+    .25,
+    1.45,
+    .25,
+    metalMaterial,
+    1.9,
+    .72,
+    .3
+);
+
+createBox(
+    .25,
+    1.45,
+    .25,
+    metalMaterial,
+    -1.9,
+    .72,
+    1.7
+);
+
+createBox(
+    .25,
+    1.45,
+    .25,
+    metalMaterial,
+    1.9,
+    .72,
+    1.7
+);
+
+
+/* =====================================================
+   COMPUTADORA
+===================================================== */
+
+const monitor =
+    createBox(
+        2,
+        1.2,
+        .12,
+        darkMaterial,
+        0,
+        2.15,
+        .7
+    );
+
+monitor.userData.interactive = true;
+monitor.userData.type = "computer";
+monitor.userData.name = "COMPUTADORA";
+
+
+const screen =
+    createBox(
+        1.7,
+        .85,
+        .02,
+        screenMaterial,
+        0,
+        2.15,
+        .62
+    );
+
+
+const monitorStand =
+    createBox(
+        .12,
+        .6,
+        .12,
+        metalMaterial,
+        0,
+        1.65,
+        .7
+    );
+
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+const keyboard =
+    createBox(
+        1.6,
+        .08,
+        .55,
+        metalMaterial,
+        0,
+        1.62,
+        1.15
+    );
+
+keyboard.userData.interactive = true;
+keyboard.userData.type = "computer";
+
+
+/* =====================================================
+   SILLA
+===================================================== */
+
+createBox(
+    1.3,
+    .18,
+    1.3,
+    darkMaterial,
+    0,
+    1.05,
+    3
+);
+
+createBox(
+    1.2,
+    1.5,
+    .18,
+    darkMaterial,
+    0,
+    1.75,
+    3.55
+);
+
+createBox(
+    .12,
+    1,
+    .12,
+    metalMaterial,
+    0,
+    .5,
+    3
+);
+
+
+/* =====================================================
+   PIZARRA DE INVESTIGACIÓN
+===================================================== */
+
+const board =
+    createBox(
+        5,
+        2.6,
+        .12,
+        darkMaterial,
+        -4,
+        2.4,
+        -7.82
+    );
+
+board.userData.interactive = true;
+board.userData.type = "board";
+board.userData.name = "PIZARRA DE INVESTIGACIÓN";
+
+
+/* =====================================================
+   MARCOS / PISTAS EN PIZARRA
+===================================================== */
+
+for (let i = 0; i < 5; i++) {
+
+    const clue =
+        createBox(
+            .55,
+            .75,
+            .03,
+            screenMaterial,
+            -5.5 + i * 0.75,
+            2.5,
+            -7.73
+        );
+
+    clue.userData.interactive = true;
+    clue.userData.type = "evidence";
+
+}
+
+
+/* =====================================================
+   ARCHIVADOR
+===================================================== */
+
+const cabinet =
+    createBox(
+        1.5,
+        2.8,
+        1,
+        metalMaterial,
+        7,
+        1.4,
+        -5.5
+    );
+
+cabinet.userData.interactive = true;
+cabinet.userData.type = "files";
+cabinet.userData.name = "ARCHIVADOR";
+
+
+/* =====================================================
+   CAJONES
+===================================================== */
+
+for (let i = 0; i < 4; i++) {
+
+    createBox(
+        1.25,
+        .4,
+        .05,
+        darkMaterial,
+        7,
+        .55 + i * .6,
+        -4.96
+    );
+
+}
+
+
+/* =====================================================
+   PUERTA
+===================================================== */
+
+const door =
+    createBox(
+        2.4,
+        4.2,
+        .18,
+        woodMaterial,
+        0,
+        2.1,
+        7.82
+    );
+
+door.userData.interactive = true;
+door.userData.type = "door";
+door.userData.name = "SALIDA";
+
+
+/* =====================================================
+   LÁMPARA
+===================================================== */
+
+const lamp =
+    createBox(
+        2.5,
+        .12,
+        .8,
+        metalMaterial,
+        0,
+        4.5,
+        -1
+    );
+
+
+/* =====================================================
+   OBJETOS DECORATIVOS
+===================================================== */
+
+// Taza
+
+createBox(
+    .25,
+    .3,
+    .25,
+    metalMaterial,
+    -1.5,
+    1.72,
+    1
+);
+
+
+// Teléfono
+
+const phone =
+    createBox(
+        .5,
+        .12,
+        .9,
+        darkMaterial,
+        1.5,
+        1.68,
+        1
+    );
+
+phone.userData.interactive = true;
+phone.userData.type = "phone";
+phone.userData.name = "TELÉFONO";
+
+
+/* =====================================================
+   CONTROLES PC
+===================================================== */
+
+const controls =
+    new PointerLockControls(
+        camera,
+        document.body
+    );
+
+
+if (!isMobile) {
+
+    renderer.domElement.addEventListener(
+        "click",
+        () => {
+
+            if (
+                !document.getElementById("modal")
+                    .classList.contains("active")
+            ) {
+
+                controls.lock();
+
             }
-        ];
 
-        const guiltyIndex = Math.floor(Math.random() * suspects.length);
-
-        const weapon = randomItem(weapons);
-
-        const evidence = shuffle(evidences).slice(0, 3);
-
-        currentCase = {
-            id: caseNumber,
-            name: `Caso ${String(caseNumber).padStart(2, "0")}`,
-            title: randomItem([
-                "El robo en el muelle",
-                "La noche del almacén",
-                "El expediente del puerto",
-                "El crimen de la oficina",
-                "El misterio de la habitación 12"
-            ]),
-            time: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, "0")} PM`,
-            weapon: weapon,
-            evidence: evidence,
-            suspects: suspects,
-            guilty: guiltyIndex,
-            status: "En curso"
-        };
-
-        /*
-         * La evidencia relacionada con el culpable
-         * se determina automáticamente.
-         */
-        currentCase.keyEvidence =
-            evidence[Math.floor(Math.random() * evidence.length)];
-
-        cases.push(currentCase);
-
-        openCase();
-
-    }
-
-
-    /* ==========================================
-       MOSTRAR CASOS
-    ========================================== */
-
-    function showCases() {
-
-        showScreen("cases");
-
-        const container =
-            document.getElementById("casesContainer");
-
-        container.innerHTML = "";
-
-        cases.forEach(gameCase => {
-
-            const card = document.createElement("div");
-
-            card.className = "case-card";
-
-            card.innerHTML = `
-                <h3>${gameCase.name}: ${gameCase.title}</h3>
-
-                <div class="case-status">
-                    Estado: ${gameCase.status}
-                </div>
-
-                <button onclick="openExistingCase(${gameCase.id})">
-                    ABRIR EXPEDIENTE
-                </button>
-            `;
-
-            container.appendChild(card);
-
-        });
-
-        const newCase = document.createElement("div");
-
-        newCase.className = "case-card new-case";
-
-        newCase.innerHTML = `
-            <h3>NUEVO CASO</h3>
-            <div class="case-status">
-                Recibir un nuevo expediente de la OIC.
-            </div>
-
-            <button onclick="createCase()">
-                INICIAR CASO
-            </button>
-        `;
-
-        container.appendChild(newCase);
-
-        updateReputation();
-    }
-
-
-    function openExistingCase(id) {
-
-        const selected =
-            cases.find(gameCase => gameCase.id === id);
-
-        if (!selected) return;
-
-        currentCase = selected;
-
-        openCase();
-    }
-
-
-    /* ==========================================
-       ABRIR OFICINA
-    ========================================== */
-
-    function openCase() {
-
-        showScreen("officeScreen");
-
-        const letter =
-            document.getElementById("caseLetter");
-
-        letter.innerHTML = `
-            <h3>OFICINA DE INVESTIGACIONES DE CRÍMENES</h3>
-
-            <p>
-                <strong>EXPEDIENTE:</strong>
-                ${currentCase.name}
-            </p>
-
-            <p>
-                La OIC solicita su intervención
-                inmediata en un caso criminal.
-            </p>
-
-            <p>
-                <strong>Hora registrada:</strong>
-                ${currentCase.time}
-            </p>
-
-            <p>
-                Se encontró evidencia relacionada
-                con el crimen. El arma involucrada
-                habría sido:
-            </p>
-
-            <p>
-                <strong>${currentCase.weapon}</strong>
-            </p>
-
-            <p>
-                Interrogue a los sospechosos y
-                determine quién presenta contradicciones
-                en su declaración.
-            </p>
-        `;
-
-
-        /* SOSPECHOSOS */
-
-        const suspectsContainer =
-            document.getElementById("suspectsContainer");
-
-        suspectsContainer.innerHTML = "";
-
-        currentCase.suspects.forEach((suspect, index) => {
-
-            const div = document.createElement("div");
-
-            div.className = "suspect";
-
-            div.innerHTML = `
-                <h3>${suspect.name}</h3>
-
-                <p>
-                    Ocupación: ${suspect.occupation}
-                </p>
-
-                <p>
-                    Relación: ${suspect.relation}
-                </p>
-
-                <p>
-                    Coartada inicial: ${suspect.alibi}
-                </p>
-
-                <button onclick="interrogate(${index})">
-                    CITAR A INTERROGATORIO
-                </button>
-            `;
-
-            suspectsContainer.appendChild(div);
-
-        });
-
-
-        /* EVIDENCIAS */
-
-        const evidenceContainer =
-            document.getElementById("evidenceContainer");
-
-        evidenceContainer.innerHTML = "";
-
-        currentCase.evidence.forEach((item, index) => {
-
-            const div = document.createElement("div");
-
-            div.style.padding = "15px";
-            div.style.borderBottom = "1px solid #333";
-
-            div.innerHTML = `
-                <strong>EVIDENCIA ${index + 1}</strong>
-                <p style="margin-top:8px;color:#999;">
-                    ${item}
-                </p>
-            `;
-
-            evidenceContainer.appendChild(div);
-
-        });
-
-    }
-
-
-    /* ==========================================
-       INTERROGATORIO
-    ========================================== */
-
-    function interrogate(index) {
-
-        const suspect =
-            currentCase.suspects[index];
-
-        showScreen("interrogationScreen");
-
-        document.getElementById("npcHeader").innerHTML = `
-            <h1>${suspect.name}</h1>
-
-            <p>
-                ${suspect.occupation} ·
-                ${suspect.relation}
-            </p>
-        `;
-
-        const questions = [
-            "¿Dónde estabas en el lapso del crimen?",
-            "¿Había alguien contigo?",
-            "¿Cuál era tu relación con la víctima?",
-            "¿Reconoces esta evidencia?"
-        ];
-
-        const container =
-            document.getElementById("questionsContainer");
-
-        container.innerHTML = "";
-
-        questions.forEach((question, questionIndex) => {
-
-            const button =
-                document.createElement("button");
-
-            button.className = "question";
-
-            button.textContent = question;
-
-            const answer =
-                document.createElement("div");
-
-            answer.className = "answer";
-
-            answer.textContent =
-                generateAnswer(
-                    suspect,
-                    questionIndex,
-                    index
-                );
-
-            button.onclick = () => {
-                answer.classList.toggle("show");
-            };
-
-            container.appendChild(button);
-            container.appendChild(answer);
-
-        });
-
-    }
-
-
-    function generateAnswer(suspect, questionIndex, suspectIndex) {
-
-        const guilty =
-            suspectIndex === currentCase.guilty;
-
-        if (questionIndex === 0) {
-
-            if (guilty) {
-                return `La declaración no coincide completamente con la información del expediente. La hora y su ubicación presentan una contradicción.`;
-            }
-
-            return suspect.alibi;
         }
+    );
 
-        if (questionIndex === 1) {
+}
 
-            if (guilty) {
-                return `Responde de forma evasiva y modifica algunos detalles de su declaración.`;
-            }
 
-            return `No. Nadie estuvo conmigo durante ese período.`;
-        }
+/* =====================================================
+   MOVIMIENTO
+===================================================== */
 
-        if (questionIndex === 2) {
+const keys = {
+    forward: false,
+    backward: false,
+    left: false,
+    right: false
+};
 
-            return `Mi relación con la víctima era conocida por otras personas y no había ningún conflicto importante.`;
-        }
 
-        if (questionIndex === 3) {
+document.addEventListener(
+    "keydown",
+    event => {
 
-            if (guilty) {
-                return `Sí. Reconozco el objeto, aunque intento explicar que no sé cómo terminó relacionado con el crimen.`;
-            }
+        if (event.code === "KeyW")
+            keys.forward = true;
 
-            return `No recuerdo haber visto ese objeto antes.`;
-        }
+        if (event.code === "KeyS")
+            keys.backward = true;
+
+        if (event.code === "KeyA")
+            keys.left = true;
+
+        if (event.code === "KeyD")
+            keys.right = true;
+
+        if (event.code === "KeyE")
+            interact();
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        if (event.code === "KeyW")
+            keys.forward = false;
+
+        if (event.code === "KeyS")
+            keys.backward = false;
+
+        if (event.code === "KeyA")
+            keys.left = false;
+
+        if (event.code === "KeyD")
+            keys.right = false;
+
+    }
+);
+
+
+/* =====================================================
+   MOVIMIENTO MÓVIL
+===================================================== */
+
+let mobileForward = 0;
+let mobileSide = 0;
+
+const joystick =
+    document.getElementById("joystick");
+
+const knob =
+    document.getElementById("joystickKnob");
+
+let joystickActive = false;
+
+
+joystick.addEventListener(
+    "touchstart",
+    event => {
+
+        joystickActive = true;
+
+        updateJoystick(
+            event.touches[0]
+        );
+
+    },
+    { passive: false }
+);
+
+
+joystick.addEventListener(
+    "touchmove",
+    event => {
+
+        if (!joystickActive)
+            return;
+
+        event.preventDefault();
+
+        updateJoystick(
+            event.touches[0]
+        );
+
+    },
+    { passive: false }
+);
+
+
+joystick.addEventListener(
+    "touchend",
+    () => {
+
+        joystickActive = false;
+
+        mobileForward = 0;
+        mobileSide = 0;
+
+        knob.style.transform =
+            "translate(-50%, -50%)";
+
+    }
+);
+
+
+function updateJoystick(touch) {
+
+    const rect =
+        joystick.getBoundingClientRect();
+
+    const centerX =
+        rect.left + rect.width / 2;
+
+    const centerY =
+        rect.top + rect.height / 2;
+
+    let x =
+        touch.clientX - centerX;
+
+    let y =
+        touch.clientY - centerY;
+
+    const max =
+        40;
+
+    const distance =
+        Math.sqrt(x*x + y*y);
+
+    if (distance > max) {
+
+        x =
+            x / distance * max;
+
+        y =
+            y / distance * max;
 
     }
 
+    knob.style.transform =
+        `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
 
-    /* ==========================================
-       ACUSACIÓN
-    ========================================== */
+    mobileSide =
+        x / max;
 
-    function showAccusation() {
+    mobileForward =
+        -y / max;
 
-        showScreen("accusationScreen");
-
-        const accused =
-            document.getElementById("accusedSelect");
-
-        const evidence =
-            document.getElementById("evidenceSelect");
-
-        accused.innerHTML = "";
-        evidence.innerHTML = "";
-
-        currentCase.suspects.forEach((suspect, index) => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = index;
-            option.textContent = suspect.name;
-
-            accused.appendChild(option);
-
-        });
-
-        currentCase.evidence.forEach(item => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = item;
-            option.textContent = item;
-
-            evidence.appendChild(option);
-
-        });
-
-    }
+}
 
 
-    /* ==========================================
-       VEREDICTO
-    ========================================== */
+/* =====================================================
+   MIRAR EN CELULAR
+===================================================== */
 
-    function makeAccusation() {
+const lookArea =
+    document.getElementById("lookArea");
 
-        const accused =
-            Number(document.getElementById("accusedSelect").value);
-
-        const selectedEvidence =
-            document.getElementById("evidenceSelect").value;
-
-        const correctSuspect =
-            accused === currentCase.guilty;
-
-        const correctEvidence =
-            selectedEvidence === currentCase.keyEvidence;
+let lastTouchX = null;
+let lastTouchY = null;
 
 
-        if (correctSuspect && correctEvidence) {
+lookArea.addEventListener(
+    "touchstart",
+    event => {
 
-            currentCase.status = "Resuelto con éxito";
+        const touch =
+            event.touches[0];
 
-            reputation += 500;
+        lastTouchX =
+            touch.clientX;
 
-            showResult(
-                "EXCELENTE TRABAJO, DETECTIVE",
-                `
-                <p>
-                    La acusación fue correcta.
-                    El sospechoso ${currentCase.suspects[currentCase.guilty].name}
-                    ha sido identificado como responsable.
-                </p>
+        lastTouchY =
+            touch.clientY;
 
-                <p>
-                    La evidencia clave fue:
-                    <strong>${currentCase.keyEvidence}</strong>.
-                </p>
+    },
+    { passive: true }
+);
 
-                <p>
-                    La OIC reconoce su trabajo.
-                    <strong>+500 reputación.</strong>
-                </p>
-                `
+
+lookArea.addEventListener(
+    "touchmove",
+    event => {
+
+        const touch =
+            event.touches[0];
+
+        if (
+            lastTouchX === null ||
+            lastTouchY === null
+        )
+            return;
+
+        const dx =
+            touch.clientX - lastTouchX;
+
+        const dy =
+            touch.clientY - lastTouchY;
+
+        camera.rotation.y -=
+            dx * 0.004;
+
+        camera.rotation.x -=
+            dy * 0.0025;
+
+        camera.rotation.x =
+            THREE.MathUtils.clamp(
+                camera.rotation.x,
+                -1.25,
+                1.25
             );
 
-        } else {
+        lastTouchX =
+            touch.clientX;
 
-            currentCase.status = "No resuelto";
+        lastTouchY =
+            touch.clientY;
 
-            reputation -= 1000;
+        event.preventDefault();
 
-            if (reputation <= 0) {
-                showScreen("gameover");
-                return;
-            }
+    },
+    { passive: false }
+);
 
-            showResult(
-                "ACUSACIÓN INCORRECTA",
-                `
-                <p>
-                    La acusación presentada no coincide
-                    con las pruebas del expediente.
-                </p>
 
-                <p>
-                    La OIC considera que el caso
-                    continúa sin resolver.
-                </p>
+lookArea.addEventListener(
+    "touchend",
+    () => {
 
-                <p>
-                    <strong>-1000 reputación.</strong>
-                </p>
-                `
+        lastTouchX = null;
+        lastTouchY = null;
+
+    }
+);
+
+
+document.getElementById(
+    "interactButton"
+).addEventListener(
+    "click",
+    interact
+);
+
+
+/* =====================================================
+   RAYCASTER
+===================================================== */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const center =
+    new THREE.Vector2(0, 0);
+
+let currentInteractive = null;
+
+
+function detectObject() {
+
+    raycaster.setFromCamera(
+        center,
+        camera
+    );
+
+    const objects =
+        scene.children.filter(
+            object =>
+                object.userData &&
+                object.userData.interactive
+        );
+
+    const intersections =
+        raycaster.intersectObjects(
+            objects,
+            false
+        );
+
+    if (
+        intersections.length &&
+        intersections[0].distance < 4
+    ) {
+
+        currentInteractive =
+            intersections[0].object;
+
+        document
+            .getElementById("interaction")
+            .classList.add("visible");
+
+        document
+            .getElementById("interaction")
+            .textContent =
+            isMobile
+                ? "INTERACTUAR"
+                : "E — INTERACTUAR";
+
+    } else {
+
+        currentInteractive = null;
+
+        document
+            .getElementById("interaction")
+            .classList.remove("visible");
+
+    }
+
+}
+
+
+/* =====================================================
+   INTERACCIÓN
+===================================================== */
+
+function interact() {
+
+    if (!currentInteractive)
+        return;
+
+    const type =
+        currentInteractive.userData.type;
+
+    if (type === "computer") {
+
+        openModal(
+            "SISTEMA OIC",
+            "Terminal de investigación. Próximamente desde aquí podrás acceder a las cámaras de seguridad, consultar registros y analizar movimientos."
+        );
+
+    }
+
+    else if (type === "board") {
+
+        openModal(
+            "PIZARRA DE INVESTIGACIÓN",
+            "Aquí aparecerán las fotografías, pistas, sospechosos y conexiones descubiertas durante la investigación."
+        );
+
+    }
+
+    else if (type === "evidence") {
+
+        openModal(
+            "EVIDENCIA",
+            "Todavía no se ha analizado esta evidencia. En la versión de investigación podrás inspeccionarla y vincularla con los sospechosos."
+        );
+
+    }
+
+    else if (type === "files") {
+
+        openModal(
+            "ARCHIVADOR",
+            "Expedientes de la OIC. Aquí podrás consultar tus casos actuales, casos resueltos y expedientes anteriores."
+        );
+
+    }
+
+    else if (type === "phone") {
+
+        openModal(
+            "TELÉFONO",
+            "Línea interna de la OIC. Las llamadas de la central aparecerán aquí cuando haya nueva información sobre el caso."
+        );
+
+    }
+
+    else if (type === "door") {
+
+        openModal(
+            "SALIR DE LA OFICINA",
+            "Desde aquí podrás regresar al listado de casos."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(title, text) {
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent = title;
+
+    document.getElementById(
+        "modalText"
+    ).textContent = text;
+
+    document.getElementById(
+        "modal"
+    ).classList.add("active");
+
+    if (
+        !isMobile &&
+        controls.isLocked
+    ) {
+
+        controls.unlock();
+
+    }
+
+}
+
+
+window.closeModal =
+    function () {
+
+        document.getElementById(
+            "modal"
+        ).classList.remove("active");
+
+    };
+
+
+/* =====================================================
+   MOVIMIENTO Y COLISIONES BÁSICAS
+===================================================== */
+
+const velocity =
+    new THREE.Vector3();
+
+const direction =
+    new THREE.Vector3();
+
+const clock =
+    new THREE.Clock();
+
+
+function movePlayer(delta) {
+
+    const speed =
+        4 * delta;
+
+    direction.set(0, 0, 0);
+
+    if (
+        keys.forward ||
+        mobileForward > .1
+    )
+        direction.z -= 1;
+
+    if (
+        keys.backward ||
+        mobileForward < -.1
+    )
+        direction.z += 1;
+
+    if (
+        keys.left ||
+        mobileSide < -.1
+    )
+        direction.x -= 1;
+
+    if (
+        keys.right ||
+        mobileSide > .1
+    )
+        direction.x += 1;
+
+
+    if (direction.length() > 0)
+        direction.normalize();
+
+
+    const forwardAmount =
+        direction.z;
+
+    const sideAmount =
+        direction.x;
+
+
+    // PC
+
+    if (!isMobile) {
+
+        if (forwardAmount !== 0)
+            controls.moveForward(
+                -forwardAmount * speed
             );
 
-        }
+        if (sideAmount !== 0)
+            controls.moveRight(
+                sideAmount * speed
+            );
+
+    }
+
+    // Celular
+
+    else {
+
+        const forward =
+            new THREE.Vector3();
+
+        camera.getWorldDirection(
+            forward
+        );
+
+        forward.y = 0;
+        forward.normalize();
+
+        const right =
+            new THREE.Vector3();
+
+        right.crossVectors(
+            forward,
+            camera.up
+        ).normalize();
+
+        camera.position.addScaledVector(
+            forward,
+            mobileForward * speed
+        );
+
+        camera.position.addScaledVector(
+            right,
+            mobileSide * speed
+        );
 
     }
 
 
-    function showResult(title, text) {
+    // Altura fija
 
-        showScreen("resultScreen");
+    camera.position.y = 1.7;
 
-        document.getElementById("resultTitle")
-            .textContent = title;
 
-        document.getElementById("resultText")
-            .innerHTML = text;
+    // Límites de la oficina
+
+    camera.position.x =
+        THREE.MathUtils.clamp(
+            camera.position.x,
+            -9,
+            9
+        );
+
+    camera.position.z =
+        THREE.MathUtils.clamp(
+            camera.position.z,
+            -7,
+            7
+        );
+
+}
+
+
+/* =====================================================
+   ANIMACIÓN
+===================================================== */
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+    const delta =
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
+
+    movePlayer(delta);
+
+    detectObject();
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+animate();
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
 
     }
+);
 
 
-    /* ==========================================
-       VOLVER
-    ========================================== */
+/* =====================================================
+   REPUTACIÓN
+===================================================== */
 
-    function returnToCases() {
+let reputation = 3500;
 
-        showCases();
+function updateReputation() {
 
-    }
+    document.getElementById(
+        "reputation"
+    ).textContent =
+        reputation;
 
+}
 
-    function showOffice() {
-
-        openCase();
-
-    }
-
-
-    /* ==========================================
-       REINICIO
-    ========================================== */
-
-    function restartGame() {
-
-        reputation = 3500;
-        cases = [];
-        caseNumber = 0;
-        currentCase = null;
-
-        showCases();
-
-    }
+updateReputation();
 
 
-    /* ==========================================
-       INICIO
-    ========================================== */
+/* =====================================================
+   PREPARACIÓN PARA EL SISTEMA DE CASOS
+===================================================== */
 
-    updateReputation();
+const gameState = {
+
+    reputation: 3500,
+
+    currentCase: null,
+
+    suspects: [],
+
+    evidence: [],
+
+    cameras: [],
+
+    guiltySuspect: null,
+
+    keyEvidence: null
+
+};
+
+
+// Lo dejamos disponible para
+// conectar el resto del juego después.
+
+window.Crimehunter =
+    gameState;
+
 
 </script>
 
