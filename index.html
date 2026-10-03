@@ -2,9 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Crimehunter</title>
 
 <style>
@@ -12,75 +10,86 @@
     box-sizing:border-box;
     margin:0;
     padding:0;
-    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
 }
 
 html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#111;
-    font-family:Arial,Helvetica,sans-serif;
+    background:#202020;
+    font-family:Arial,sans-serif;
 }
 
 #game{
-    width:100vw;
-    height:100vh;
-    position:relative;
+    position:fixed;
+    inset:0;
     overflow:hidden;
 }
 
 canvas{
     display:block;
+    width:100%;
+    height:100%;
 }
-
-/* =========================
-   PORTRAIT
-========================= */
 
 #portrait{
     display:none;
-    position:absolute;
+    position:fixed;
     inset:0;
+    z-index:1000;
     background:#111;
     color:white;
-    z-index:1000;
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:30px;
     font-size:20px;
+    padding:30px;
 }
 
-@media (orientation:portrait){
+@media(max-width:900px) and (orientation:portrait){
     #portrait{
         display:flex;
     }
 }
 
-/* =========================
-   UI
-========================= */
-
 #hud{
     position:absolute;
-    top:15px;
+    top:14px;
     left:15px;
     color:white;
-    z-index:20;
-    pointer-events:none;
+    z-index:10;
     text-shadow:0 2px 5px #000;
+    pointer-events:none;
 }
 
 #title{
-    font-size:18px;
+    font-size:17px;
     font-weight:bold;
     letter-spacing:2px;
 }
 
 #rep{
     margin-top:5px;
-    font-size:13px;
+    font-size:12px;
+}
+
+#help{
+    position:absolute;
+    right:15px;
+    top:15px;
+    color:#ddd;
+    font-size:11px;
+    text-align:right;
+    z-index:10;
+    pointer-events:none;
+}
+
+@media(max-width:900px){
+    #help{
+        display:none;
+    }
 }
 
 #interaction{
@@ -88,99 +97,78 @@ canvas{
     left:50%;
     bottom:35px;
     transform:translateX(-50%);
-    background:rgba(0,0,0,.72);
+    background:rgba(0,0,0,.75);
     color:white;
-    padding:11px 18px;
-    border-radius:8px;
-    font-size:14px;
+    padding:10px 17px;
+    border-radius:7px;
+    font-size:13px;
     display:none;
-    z-index:30;
+    z-index:20;
+    pointer-events:none;
 }
-
-/* =========================
-   MOBILE CONTROLS
-========================= */
 
 #mobileControls{
     display:none;
     position:absolute;
     inset:0;
-    z-index:40;
+    z-index:30;
     pointer-events:none;
+}
+
+@media(max-width:900px) and (orientation:landscape){
+    #mobileControls{
+        display:block;
+    }
 }
 
 #joystick{
     position:absolute;
-    left:25px;
-    bottom:25px;
-    width:125px;
-    height:125px;
+    width:120px;
+    height:120px;
+    left:24px;
+    bottom:22px;
     border-radius:50%;
-    background:rgba(255,255,255,.09);
-    border:2px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.10);
+    border:2px solid rgba(255,255,255,.20);
     pointer-events:auto;
     touch-action:none;
 }
 
-#joystickKnob{
+#knob{
     position:absolute;
-    width:55px;
-    height:55px;
-    left:35px;
-    top:35px;
+    width:52px;
+    height:52px;
+    left:32px;
+    top:32px;
     border-radius:50%;
     background:rgba(255,255,255,.25);
     border:2px solid rgba(255,255,255,.35);
 }
 
-#lookArea{
+#look{
     position:absolute;
     right:0;
     top:0;
-    width:55%;
+    width:58%;
     height:100%;
     pointer-events:auto;
     touch-action:none;
 }
 
-#interactButton{
+#useButton{
     position:absolute;
     right:25px;
-    bottom:30px;
-    width:75px;
-    height:75px;
+    bottom:27px;
+    width:72px;
+    height:72px;
     border-radius:50%;
     border:2px solid rgba(255,255,255,.3);
-    background:rgba(0,0,0,.5);
+    background:rgba(0,0,0,.55);
     color:white;
-    font-size:12px;
+    font-size:11px;
     pointer-events:auto;
     touch-action:none;
 }
-
-@media (max-width:900px) and (orientation:landscape){
-
-    #mobileControls{
-        display:block;
-    }
-
-    #hud{
-        top:8px;
-        left:10px;
-    }
-
-    #title{
-        font-size:14px;
-    }
-
-    #rep{
-        font-size:11px;
-    }
-}
-
-/* =========================
-   MODAL
-========================= */
 
 #modal{
     display:none;
@@ -194,54 +182,33 @@ canvas{
 }
 
 #modalBox{
-    width:min(720px,92vw);
+    width:min(650px,92vw);
     max-height:85vh;
     overflow:auto;
-    background:#f0eee8;
-    color:#1b1b1b;
+    background:#eeeae1;
+    color:#171717;
     border-radius:10px;
-    box-shadow:0 15px 50px rgba(0,0,0,.6);
-    padding:25px;
+    padding:24px;
 }
 
 #modalTitle{
-    font-size:22px;
-    margin-bottom:15px;
+    font-size:21px;
+    font-weight:bold;
+    margin-bottom:14px;
 }
 
 #modalContent{
     line-height:1.5;
+    font-size:14px;
 }
 
-#closeModal{
+#close{
     margin-top:20px;
-    padding:10px 18px;
     border:0;
-    border-radius:6px;
     background:#202020;
     color:white;
-    cursor:pointer;
-}
-
-/* =========================
-   DESKTOP HELP
-========================= */
-
-#controlsHelp{
-    position:absolute;
-    right:15px;
-    top:15px;
-    color:rgba(255,255,255,.65);
-    font-size:11px;
-    text-align:right;
-    z-index:20;
-    pointer-events:none;
-}
-
-@media(max-width:900px){
-    #controlsHelp{
-        display:none;
-    }
+    padding:10px 18px;
+    border-radius:6px;
 }
 </style>
 </head>
@@ -250,46 +217,54 @@ canvas{
 
 <div id="game">
 
-    <div id="portrait">
-        Girá tu teléfono horizontalmente para jugar.
+<div id="portrait">
+    Girá el teléfono horizontalmente para jugar.
+</div>
+
+<div id="hud">
+    <div id="title">CRIMEHUNTER</div>
+    <div id="rep">Reputación: 3500</div>
+</div>
+
+<div id="help">
+    WASD — Moverse<br>
+    Mouse — Mirar<br>
+    Click / E — Interactuar
+</div>
+
+<div id="interaction">
+    Interactuar
+</div>
+
+<div id="mobileControls">
+
+    <div id="joystick">
+        <div id="knob"></div>
     </div>
 
-    <div id="hud">
-        <div id="title">CRIMEHUNTER</div>
-        <div id="rep">Reputación: 3500</div>
-    </div>
+    <div id="look"></div>
 
-    <div id="controlsHelp">
-        WASD — Moverse<br>
-        Mouse — Mirar<br>
-        Click — Interactuar
-    </div>
+    <button id="useButton">
+        USAR
+    </button>
 
-    <div id="interaction">
-        Interactuar
-    </div>
+</div>
 
-    <div id="mobileControls">
+<div id="modal">
 
-        <div id="joystick">
-            <div id="joystickKnob"></div>
-        </div>
+    <div id="modalBox">
 
-        <div id="lookArea"></div>
+        <div id="modalTitle"></div>
 
-        <button id="interactButton">
-            USAR
+        <div id="modalContent"></div>
+
+        <button id="close">
+            Cerrar
         </button>
 
     </div>
 
-    <div id="modal">
-        <div id="modalBox">
-            <div id="modalTitle"></div>
-            <div id="modalContent"></div>
-            <button id="closeModal">Cerrar</button>
-        </div>
-    </div>
+</div>
 
 </div>
 
@@ -305,11 +280,10 @@ canvas{
 <script type="module">
 
 import * as THREE from "three";
-import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 
-/* =========================================================
+/* =====================================================
    ESTADO
-========================================================= */
+===================================================== */
 
 window.Crimehunter = {
     reputation:3500,
@@ -321,50 +295,52 @@ window.Crimehunter = {
     keyEvidence:null
 };
 
+/* =====================================================
+   ESCENA
+===================================================== */
+
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x25231f);
+scene.background =
+    new THREE.Color(0x8b8983);
 
-scene.fog = new THREE.Fog(
-    0x25231f,
-    9,
-    18
-);
-
-/* =========================================================
+/* =====================================================
    CÁMARA
-========================================================= */
+===================================================== */
 
-const camera = new THREE.PerspectiveCamera(
-    70,
-    window.innerWidth / window.innerHeight,
-    0.05,
-    100
-);
+const camera =
+    new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth/window.innerHeight,
+        0.05,
+        100
+    );
 
 camera.rotation.order = "YXZ";
 
 /*
-    Altura humana.
-    El jugador empieza sentado.
+   Altura humana aproximada.
+   El jugador comienza frente al escritorio.
 */
 
 camera.position.set(
     0,
-    1.55,
-    -0.65
+    1.60,
+    1.05
 );
 
-let yaw = 0;
-let pitch = -0.04;
+let yaw = Math.PI;
+let pitch = -0.05;
 
-/* =========================================================
+/* =====================================================
    RENDERER
-========================================================= */
+===================================================== */
 
-const renderer = new THREE.WebGLRenderer({
-    antialias:true
-});
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:true,
+        powerPreference:"high-performance"
+    });
 
 renderer.setSize(
     window.innerWidth,
@@ -376,953 +352,632 @@ renderer.setPixelRatio(
 );
 
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
 
 document
     .getElementById("game")
     .appendChild(renderer.domElement);
 
-/* =========================================================
-   ILUMINACIÓN
-========================================================= */
+/* =====================================================
+   LUCES
+===================================================== */
 
-/* Luz general */
+/* iluminación general */
 
-const ambient = new THREE.AmbientLight(
-    0xfff4df,
-    2.1
-);
+const ambient =
+    new THREE.HemisphereLight(
+        0xfff4df,
+        0x555555,
+        2.2
+    );
 
 scene.add(ambient);
 
-/* Luz cálida principal */
+/* lámpara central */
 
-const ceilingLight = new THREE.PointLight(
-    0xffd58a,
-    18,
-    12
-);
+const ceiling =
+    new THREE.PointLight(
+        0xffd38a,
+        10,
+        13
+    );
 
-ceilingLight.position.set(
+ceiling.position.set(
     0,
-    3.1,
-    -0.3
-);
-
-ceilingLight.castShadow = true;
-ceilingLight.shadow.mapSize.width = 1024;
-ceilingLight.shadow.mapSize.height = 1024;
-
-scene.add(ceilingLight);
-
-/* Luz de escritorio */
-
-const deskLampLight = new THREE.PointLight(
-    0xffc86b,
-    7,
-    5
-);
-
-deskLampLight.position.set(
-    -1.1,
-    2.0,
-    -1.75
-);
-
-scene.add(deskLampLight);
-
-/* Luz suave desde ventana */
-
-const windowLight = new THREE.PointLight(
-    0xc9d8ff,
     3,
-    6
-);
-
-windowLight.position.set(
-    -3.3,
-    2.2,
     0
 );
 
-scene.add(windowLight);
+ceiling.castShadow = true;
 
-/* =========================================================
+scene.add(ceiling);
+
+/* lámpara escritorio */
+
+const deskLight =
+    new THREE.PointLight(
+        0xffc36b,
+        5,
+        5
+    );
+
+deskLight.position.set(
+    -1.25,
+    1.8,
+    -2.0
+);
+
+scene.add(deskLight);
+
+/* =====================================================
    MATERIALES
-========================================================= */
+===================================================== */
 
-const wallMat = new THREE.MeshStandardMaterial({
-    color:0xd8d4ca,
-    roughness:.9
-});
+function material(color,roughness=.8){
 
-const floorMat = new THREE.MeshStandardMaterial({
-    color:0x55504a,
-    roughness:.85
-});
+    return new THREE.MeshStandardMaterial({
+        color:color,
+        roughness:roughness
+    });
+}
 
-const woodMat = new THREE.MeshStandardMaterial({
-    color:0x5c4634,
-    roughness:.65
-});
+const wallMat =
+    material(0xd7d3c9);
 
-const darkWoodMat = new THREE.MeshStandardMaterial({
-    color:0x30271f,
-    roughness:.7
-});
+const floorMat =
+    material(0x55504a);
 
-const blackMat = new THREE.MeshStandardMaterial({
-    color:0x151515,
-    roughness:.45
-});
+const woodMat =
+    material(0x5a4433);
 
-const metalMat = new THREE.MeshStandardMaterial({
-    color:0x777777,
-    metalness:.7,
-    roughness:.3
-});
+const darkWood =
+    material(0x29221d);
 
-const whiteMat = new THREE.MeshStandardMaterial({
-    color:0xe8e6df,
-    roughness:.8
-});
+const black =
+    material(0x151515,.4);
 
-const greenMat = new THREE.MeshStandardMaterial({
-    color:0x344b38,
-    roughness:.8
-});
+const metal =
+    material(0x777777,.35);
 
-/* =========================================================
+const green =
+    material(0x354b3a);
+
+/* =====================================================
    HELPERS
-========================================================= */
+===================================================== */
 
-function box(
-    w,
-    h,
-    d,
-    material,
-    x,
-    y,
-    z,
+function cube(
+    w,h,d,
+    mat,
+    x,y,z,
     name=""
 ){
 
-    const geometry =
-        new THREE.BoxGeometry(w,h,d);
-
     const mesh =
         new THREE.Mesh(
-            geometry,
-            material
+            new THREE.BoxGeometry(w,h,d),
+            mat
         );
 
     mesh.position.set(x,y,z);
 
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.castShadow=true;
+    mesh.receiveShadow=true;
 
-    mesh.userData.name = name;
+    mesh.userData.name=name;
 
     scene.add(mesh);
 
     return mesh;
 }
 
-function cylinder(
+function cyl(
     radius,
     height,
-    material,
-    x,
-    y,
-    z
+    mat,
+    x,y,z
 ){
-
-    const geometry =
-        new THREE.CylinderGeometry(
-            radius,
-            radius,
-            height,
-            20
-        );
 
     const mesh =
         new THREE.Mesh(
-            geometry,
-            material
+            new THREE.CylinderGeometry(
+                radius,
+                radius,
+                height,
+                16
+            ),
+            mat
         );
 
     mesh.position.set(x,y,z);
 
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.castShadow=true;
 
     scene.add(mesh);
 
     return mesh;
 }
 
-function plane(
-    w,
-    h,
-    material,
-    x,
-    y,
-    z,
-    rx=0,
-    ry=0
-){
-
-    const geometry =
-        new THREE.PlaneGeometry(w,h);
-
-    const mesh =
-        new THREE.Mesh(
-            geometry,
-            material
-        );
-
-    mesh.position.set(x,y,z);
-    mesh.rotation.x = rx;
-    mesh.rotation.y = ry;
-
-    scene.add(mesh);
-
-    return mesh;
-}
-
-/* =========================================================
+/* =====================================================
    HABITACIÓN
-========================================================= */
+===================================================== */
 
-const ROOM_W = 8;
-const ROOM_D = 6;
-const WALL_H = 3.2;
+const W=8;
+const D=6;
+const H=3.2;
 
-/* Piso */
+/* piso */
 
-box(
-    ROOM_W,
-    .15,
-    ROOM_D,
+cube(
+    W,.15,D,
     floorMat,
-    0,
-    -.08,
-    0
+    0,-.08,0
 );
 
-/* Pared trasera */
+/* pared trasera */
 
-box(
-    ROOM_W,
-    WALL_H,
-    .15,
+cube(
+    W,H,.12,
     wallMat,
-    0,
-    WALL_H/2,
-    -ROOM_D/2
+    0,H/2,-3
 );
 
-/* Pared izquierda */
+/* pared izquierda */
 
-box(
-    .15,
-    WALL_H,
-    ROOM_D,
+cube(
+    .12,H,D,
     wallMat,
-    -ROOM_W/2,
-    WALL_H/2,
-    0
+    -4,H/2,0
 );
 
-/* Pared derecha */
+/* pared derecha */
 
-box(
-    .15,
-    WALL_H,
-    ROOM_D,
+cube(
+    .12,H,D,
     wallMat,
-    ROOM_W/2,
-    WALL_H/2,
-    0
+    4,H/2,0
 );
 
-/* Pared frontal */
+/* pared frontal */
 
-box(
-    ROOM_W,
-    WALL_H,
-    .15,
+cube(
+    W,H,.12,
     wallMat,
-    0,
-    WALL_H/2,
-    ROOM_D/2
+    0,H/2,3
 );
 
-/* =========================================================
+/* =====================================================
    ESCRITORIO PEGADO A LA PARED
-========================================================= */
+===================================================== */
 
-const deskZ = -2.15;
-const deskY = .78;
+const deskZ=-2.30;
 
 /* cubierta */
 
-const desk = box(
-    4.7,
-    .13,
-    1.15,
+cube(
+    4.8,.12,1.05,
     woodMat,
-    0,
-    deskY,
-    deskZ,
+    0,.78,deskZ,
     "desk"
 );
 
 /* patas */
 
-box(
-    .13,
-    .78,
-    1.0,
-    darkWoodMat,
-    -2.05,
-    .39,
-    deskZ
+cube(
+    .12,.78,.9,
+    darkWood,
+    -2.05,.39,deskZ
 );
 
-box(
-    .13,
-    .78,
-    1.0,
-    darkWoodMat,
-    2.05,
-    .39,
-    deskZ
+cube(
+    .12,.78,.9,
+    darkWood,
+    2.05,.39,deskZ
 );
 
 /* cajonera */
 
-box(
-    .8,
-    .72,
-    .9,
-    darkWoodMat,
-    1.55,
-    .39,
-    deskZ
+cube(
+    .75,.70,.85,
+    darkWood,
+    1.55,.40,deskZ
 );
 
-box(
-    .72,
-    .03,
-    .35,
-    metalMat,
-    1.55,
-    .53,
-    deskZ-.47
-);
-
-box(
-    .72,
-    .03,
-    .35,
-    metalMat,
-    1.55,
-    .28,
-    deskZ-.47
-);
-
-/* =========================================================
-   SILLA
-========================================================= */
-
-const chair = new THREE.Group();
-scene.add(chair);
+/* =====================================================
+   SILLA PROPORCIONADA
+===================================================== */
 
 /* asiento */
 
-const seat = box(
-    .85,
-    .16,
-    .75,
-    blackMat,
-    0,
-    .68,
-    -1.25,
+cube(
+    .72,.13,.65,
+    black,
+    0,.63,-1.25,
     "chair"
 );
 
-seat.castShadow = true;
-
 /* respaldo */
 
-box(
-    .85,
-    1.0,
-    .16,
-    blackMat,
-    0,
-    1.12,
-    -1.60
+cube(
+    .72,.78,.12,
+    black,
+    0,1.02,-1.54
+);
+
+/* columna */
+
+cyl(
+    .055,.42,
+    metal,
+    0,.40,-1.25
 );
 
 /* base */
 
-cylinder(
-    .07,
-    .55,
-    metalMat,
-    0,
-    .38,
-    -1.25
-);
+const chairBase =
+    cyl(
+        .28,.035,
+        metal,
+        0,.20,-1.25
+    );
 
-/* =========================================================
+/* =====================================================
    MONITOR
-========================================================= */
+===================================================== */
 
-box(
-    1.15,
-    .7,
-    .08,
-    blackMat,
-    -.75,
-    1.22,
-    deskZ-.15,
+cube(
+    1.25,.72,.08,
+    black,
+    -.75,1.22,-2.20,
     "computer"
 );
 
-box(
-    .72,
-    .08,
-    .08,
-    metalMat,
-    -.75,
-    .80,
-    deskZ-.15
+cube(
+    .75,.08,.08,
+    metal,
+    -.75,.82,-2.20
 );
 
 /* pantalla */
 
-const screenMat =
-    new THREE.MeshStandardMaterial({
-        color:0x183340,
-        emissive:0x071820,
-        emissiveIntensity:1.3
-    });
+const screen =
+    material(0x19313b,.3);
 
-box(
-    .98,
-    .52,
-    .015,
-    screenMat,
-    -.75,
-    1.22,
-    deskZ-.205
+screen.emissive =
+    new THREE.Color(0x07151a);
+
+screen.emissiveIntensity=.8;
+
+cube(
+    1.08,.54,.015,
+    screen,
+    -.75,1.22,-2.25
 );
 
 /* teclado */
 
-box(
-    .9,
-    .035,
-    .3,
-    blackMat,
-    -.7,
-    .87,
-    -1.72
+cube(
+    .9,.035,.28,
+    black,
+    -.70,.86,-1.98
 );
 
 /* mouse */
 
-box(
-    .18,
-    .035,
-    .25,
-    blackMat,
-    -.05,
-    .88,
-    -1.72
+cube(
+    .18,.035,.23,
+    black,
+    -.05,.87,-1.98
 );
 
-/* =========================================================
-   TELÉFONO MODERNO
-========================================================= */
+/* =====================================================
+   TELÉFONO
+===================================================== */
 
-box(
-    .24,
-    .025,
-    .5,
-    blackMat,
-    .45,
-    .87,
-    -1.95,
+cube(
+    .24,.025,.48,
+    black,
+    .43,.86,-1.96,
     "phone"
 );
 
-const phoneScreen = new THREE.MeshStandardMaterial({
-    color:0x222831,
-    emissive:0x10151b,
-    emissiveIntensity:.8
-});
-
-box(
-    .19,
-    .008,
-    .43,
-    phoneScreen,
-    .45,
-    .887,
-    -1.95
-);
-
-/* =========================================================
+/* =====================================================
    LÁMPARA
-========================================================= */
+===================================================== */
 
-cylinder(
-    .13,
-    .05,
-    metalMat,
-    -1.8,
-    .87,
-    -1.95
+cyl(
+    .13,.04,
+    metal,
+    -1.75,.86,-1.95
 );
 
-cylinder(
-    .035,
-    .55,
-    metalMat,
-    -1.8,
-    1.12,
-    -1.95
+cyl(
+    .025,.45,
+    metal,
+    -1.75,1.08,-1.95
 );
 
-const lampShade =
+const shade =
     new THREE.Mesh(
         new THREE.ConeGeometry(
-            .23,
-            .18,
-            20,
-            1,
-            true
+            .20,.16,16,1,true
         ),
-        greenMat
+        green
     );
 
-lampShade.position.set(
-    -1.8,
-    1.42,
+shade.position.set(
+    -1.75,
+    1.36,
     -1.95
 );
 
-scene.add(lampShade);
+scene.add(shade);
 
-/* =========================================================
-   PIZARRA DE INVESTIGACIÓN
-========================================================= */
+/* =====================================================
+   PIZARRA
+===================================================== */
 
-box(
-    4.4,
-    1.65,
-    .10,
-    darkWoodMat,
-    0,
-    2.15,
-    -2.05,
+cube(
+    4.5,1.55,.08,
+    darkWood,
+    0,2.15,-2.05,
     "board"
 );
 
-box(
-    4.15,
-    1.42,
-    .025,
-    new THREE.MeshStandardMaterial({
-        color:0x6b5140
-    }),
-    0,
-    2.15,
-    -2.115
+const boardMat =
+    material(0x705b49);
+
+cube(
+    4.25,1.32,.025,
+    boardMat,
+    0,2.15,-2.10
 );
 
-/* Fotos/documentos */
+/* documentos */
 
-for(let i=0;i<9;i++){
+const paperMat =
+    material(0xe1ded5);
 
-    const x =
-        -1.7 + (i%3)*1.7;
+for(let i=0;i<8;i++){
 
-    const y =
-        1.7 + Math.floor(i/3)*.43;
+    const x=-1.65+(i%4)*1.1;
+    const y=1.78+Math.floor(i/4)*.65;
 
-    const mat =
-        new THREE.MeshStandardMaterial({
-            color:
-                i%2===0
-                ? 0xdedbd1
-                : 0xc9c6bb
-        });
-
-    const note =
-        box(
-            .55,
-            .32,
-            .018,
-            mat,
-            x,
-            y,
-            -2.14
-        );
-
-    note.rotation.z =
-        (Math.random()-.5)*.12;
+    cube(
+        .55,.38,.02,
+        paperMat,
+        x,y,-2.13
+    );
 }
 
-/* Líneas de investigación */
+/* conexiones */
 
-function boardLine(
-    x1,y1,x2,y2
-){
+const redMat =
+    material(0x8b2929);
 
-    const dx=x2-x1;
-    const dy=y2-y1;
-
-    const length=Math.sqrt(
-        dx*dx+dy*dy
-    );
-
-    const line=box(
-        length,
-        .012,
-        .012,
-        new THREE.MeshStandardMaterial({
-            color:0x8b2727
-        }),
-        (x1+x2)/2,
-        (y1+y2)/2,
-        -2.155
-    );
-
-    line.rotation.z=
-        Math.atan2(dy,dx);
-}
-
-boardLine(
-    -1.6,1.75,
-    0,2.15
+cube(
+    1.1,.015,.015,
+    redMat,
+    -.55,2.12,-2.15
 );
 
-boardLine(
-    0,2.15,
-    1.55,1.75
+cube(
+    .015, .75,.015,
+    redMat,
+    .0,2.05,-2.15
 );
 
-boardLine(
-    -1.55,2.45,
-    .3,1.75
-);
-
-/* =========================================================
+/* =====================================================
    VENTANA IZQUIERDA
-========================================================= */
+===================================================== */
 
-const windowFrame =
-    new THREE.MeshStandardMaterial({
-        color:0x47433e
-    });
+const frame =
+    material(0x47443f);
 
-box(
-    .12,
-    1.8,
-    2.1,
-    windowFrame,
-    -3.91,
-    1.95,
-    .15
+cube(
+    .10,1.75,2.0,
+    frame,
+    -3.92,1.95,.25
 );
 
-const glassMat =
+const glass =
     new THREE.MeshStandardMaterial({
-        color:0x8296a4,
+        color:0x7891a0,
         transparent:true,
-        opacity:.45,
+        opacity:.5,
         roughness:.1
     });
 
-box(
-    .03,
-    1.55,
-    1.85,
-    glassMat,
-    -3.85,
-    1.95,
-    .15
+cube(
+    .025,1.50,1.75,
+    glass,
+    -3.86,1.95,.25
 );
 
-/* divisiones */
+/* marco central */
 
-box(
-    .04,
-    1.55,
-    .05,
-    windowFrame,
-    -3.81,
-    1.95,
-    .15
+cube(
+    .035,1.50,.06,
+    frame,
+    -3.82,1.95,.25
 );
 
-box(
-    .04,
-    .05,
-    1.85,
-    windowFrame,
-    -3.81,
-    1.95,
-    .15
+cube(
+    .035,.05,1.75,
+    frame,
+    -3.82,1.95,.25
 );
 
-/* =========================================================
-   PUERTA DE SALIDA
-========================================================= */
+/* =====================================================
+   PUERTA
+===================================================== */
 
-const door =
-    box(
-        1.05,
-        2.25,
-        .12,
-        darkWoodMat,
-        3.88,
-        1.15,
-        -.1,
-        "door"
-    );
-
-const handle =
-    cylinder(
-        .035,
-        .08,
-        metalMat,
-        3.62,
-        1.15,
-        -.17
-    );
-
-handle.rotation.z =
-    Math.PI/2;
-
-/* =========================================================
-   ESTANTERÍA
-========================================================= */
-
-box(
-    1.0,
+cube(
+    1.05,
     2.25,
-    .42,
-    darkWoodMat,
-    2.85,
-    1.12,
-    -1.8
+    .10,
+    darkWood,
+    3.90,
+    1.125,
+    .35,
+    "door"
 );
 
-/* estantes */
+/* manija */
+
+cyl(
+    .035,.09,
+    metal,
+    3.58,1.15,.27
+);
+
+/* =====================================================
+   ESTANTERÍA
+===================================================== */
+
+cube(
+    1.0,2.3,.40,
+    darkWood,
+    2.85,1.15,-1.60
+);
 
 for(let i=0;i<4;i++){
 
-    box(
-        .85,
-        .05,
-        .35,
+    cube(
+        .85,.05,.32,
         woodMat,
-        2.85,
-        .55+i*.45,
-        -1.58
+        2.85,.55+i*.48,-1.38
     );
 }
 
 /* libros */
 
+const bookColors=[
+    0x27384a,
+    0x663c35,
+    0x3e573e,
+    0x88704d
+];
+
 for(let i=0;i<12;i++){
 
-    box(
-        .07,
-        .28,
-        .24,
-        new THREE.MeshStandardMaterial({
-            color:
-                [0x27364a,0x623b35,0x3c523e,0x8b7650][i%4]
-        }),
-        2.5+(i%6)*.13,
-        .7+Math.floor(i/6)*.75,
-        -1.76
+    cube(
+        .07,.30,.22,
+        material(bookColors[i%4]),
+        2.48+(i%6)*.13,
+        .72+Math.floor(i/6)*.72,
+        -1.58
     );
 }
 
-/* =========================================================
+/* =====================================================
    PLANTA
-========================================================= */
+===================================================== */
 
-cylinder(
-    .22,
-    .25,
-    new THREE.MeshStandardMaterial({
-        color:0x554033
-    }),
-    -3.0,
-    .92,
-    -1.7
+cyl(
+    .20,.22,
+    material(0x574337),
+    -3.0,.88,-1.55
 );
-
-const leavesMat =
-    new THREE.MeshStandardMaterial({
-        color:0x3d6843
-    });
 
 for(let i=0;i<5;i++){
 
     const leaf =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .18,
-                10,
-                8
+                .16,10,8
             ),
-            leavesMat
+            material(0x3d6744)
         );
 
     leaf.scale.y=1.5;
 
     leaf.position.set(
-        -3 + (Math.random()-.5)*.35,
-        1.25+Math.random()*.25,
-        -1.7
+        -3+(Math.random()-.5)*.3,
+        1.12+Math.random()*.35,
+        -1.55
     );
 
     scene.add(leaf);
 }
 
-/* =========================================================
-   CUADRO DECORATIVO
-========================================================= */
+/* =====================================================
+   CUADRO
+===================================================== */
 
-box(
-    1.1,
-    .75,
-    .05,
-    darkWoodMat,
-    2.65,
-    2.2,
-    2.86
+cube(
+    1.15,.75,.05,
+    darkWood,
+    2.55,2.20,2.92
 );
 
-box(
-    .9,
-    .55,
-    .015,
-    new THREE.MeshStandardMaterial({
-        color:0x777b78
-    }),
-    2.65,
-    2.2,
-    2.82
+cube(
+    .95,.55,.02,
+    material(0x767a76),
+    2.55,2.20,2.88
 );
 
-/* =========================================================
+/* =====================================================
    ALFOMBRA
-========================================================= */
+===================================================== */
 
-box(
-    4.8,
-    .025,
-    2.2,
-    new THREE.MeshStandardMaterial({
-        color:0x393735,
-        roughness:1
-    }),
-    0,
-    .015,
-    .2
+cube(
+    4.7,.02,2.0,
+    material(0x373534),
+    0,.015,.25
 );
 
-/* =========================================================
-   OBJETOS INTERACTIVOS
-========================================================= */
+/* =====================================================
+   INTERACCIÓN
+===================================================== */
 
-const interactiveObjects = [
-    {
-        objectName:"computer",
+const objects={
+
+    computer:{
         title:"SISTEMA OIC",
-        content:`
-        <p><b>Sistema de cámaras de la Oficina.</b></p>
-        <br>
-        <p>Desde aquí podrás acceder a las cámaras de seguridad,
-        revisar grabaciones y encontrar evidencias del caso.</p>
-        <br>
-        <p>En una próxima versión se podrá seleccionar cada cámara
-        y reproducir su línea temporal.</p>
+        text:`
+        <b>Sistema de cámaras de la OIC</b>
+        <br><br>
+        Desde esta computadora podrás revisar
+        las cámaras de seguridad de los casos.
+        <br><br>
+        <b>Próximamente:</b> cámaras, reproducción,
+        línea temporal y evidencias.
         `
     },
-    {
-        objectName:"board",
-        title:"PIZARRA DEL CASO",
-        content:`
-        <p><b>Panel de investigación.</b></p>
-        <br>
-        <p>Aquí aparecerán fotografías, sospechosos,
-        evidencias y conexiones encontradas durante la investigación.</p>
+
+    board:{
+        title:"PIZARRA DE INVESTIGACIÓN",
+        text:`
+        <b>Panel del caso</b>
+        <br><br>
+        Aquí se organizarán fotografías,
+        sospechosos, pistas y conexiones.
         `
     },
-    {
-        objectName:"phone",
+
+    phone:{
         title:"TELÉFONO",
-        content:`
-        <p>Teléfono de la oficina.</p>
-        <br>
-        <p>No hay llamadas nuevas.</p>
+        text:`
+        El teléfono de la oficina.
+        <br><br>
+        No hay llamadas nuevas.
         `
     },
-    {
-        objectName:"door",
+
+    door:{
         title:"SALIDA",
-        content:`
-        <p>Puerta de salida de la oficina.</p>
-        <br>
-        <p>Al salir podrás acceder a otras áreas de la OIC.</p>
+        text:`
+        Salida de la oficina.
+        <br><br>
+        Desde aquí podrás abandonar el despacho
+        y acceder a otras zonas de la OIC.
         `
     }
-];
 
-/* =========================================================
-   MODAL
-========================================================= */
-
-const modal =
-    document.getElementById("modal");
-
-const modalTitle =
-    document.getElementById("modalTitle");
-
-const modalContent =
-    document.getElementById("modalContent");
-
-document
-    .getElementById("closeModal")
-    .onclick = () => {
-
-        modal.style.display="none";
-
-    };
-
-function openModal(title,content){
-
-    modalTitle.textContent=title;
-    modalContent.innerHTML=content;
-
-    modal.style.display="flex";
-}
-
-/* =========================================================
-   RAYCAST
-========================================================= */
+};
 
 const raycaster =
     new THREE.Raycaster();
@@ -1330,9 +985,9 @@ const raycaster =
 const center =
     new THREE.Vector2(0,0);
 
-let currentInteractive=null;
+let currentObject=null;
 
-function checkInteraction(){
+function findInteractive(){
 
     raycaster.setFromCamera(
         center,
@@ -1345,28 +1000,530 @@ function checkInteraction(){
             true
         );
 
-    currentInteractive=null;
+    currentObject=null;
 
     for(const hit of hits){
 
-        const obj =
-            hit.object;
+        let obj=hit.object;
 
-        let target=obj;
+        while(obj){
 
-        while(target){
+            if(
+                obj.userData &&
+                objects[obj.userData.name]
+            ){
 
-            const found =
-                interactiveObjects.find(
-                    x =>
-                    x.objectName ===
-                    target.userData.name
-                );
-
-            if(found){
-
-                currentInteractive=found;
+                currentObject =
+                    objects[obj.userData.name];
 
                 document
                     .getElementById("interaction")
                     .style.display="block";
+
+                return;
+            }
+
+            obj=obj.parent;
+        }
+    }
+
+    document
+        .getElementById("interaction")
+        .style.display="none";
+}
+
+function interact(){
+
+    if(!currentObject)
+        return;
+
+    document
+        .getElementById("modalTitle")
+        .textContent=
+        currentObject.title;
+
+    document
+        .getElementById("modalContent")
+        .innerHTML=
+        currentObject.text;
+
+    document
+        .getElementById("modal")
+        .style.display="flex";
+}
+
+document
+    .getElementById("close")
+    .onclick=()=>{
+        document
+            .getElementById("modal")
+            .style.display="none";
+    };
+
+/* =====================================================
+   PC: POINTER LOCK SIMPLE
+===================================================== */
+
+let locked=false;
+
+renderer.domElement.addEventListener(
+    "click",
+    ()=>{
+        if(
+            window.innerWidth>900 &&
+            document.getElementById("modal").style.display!=="flex"
+        ){
+            renderer.domElement.requestPointerLock();
+        }
+    }
+);
+
+document.addEventListener(
+    "pointerlockchange",
+    ()=>{
+        locked=
+            document.pointerLockElement===
+            renderer.domElement;
+    }
+);
+
+document.addEventListener(
+    "mousemove",
+    e=>{
+
+        if(!locked)
+            return;
+
+        yaw-=e.movementX*.0025;
+        pitch-=e.movementY*.0025;
+
+        pitch=
+            THREE.MathUtils.clamp(
+                pitch,
+                -1.25,
+                1.25
+            );
+
+        updateCamera();
+
+    }
+);
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+const keys={};
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        keys[e.code]=true;
+
+        if(e.code==="KeyE"){
+            interact();
+        }
+
+    }
+);
+
+document.addEventListener(
+    "keyup",
+    e=>{
+        keys[e.code]=false;
+    }
+);
+
+/* =====================================================
+   CÁMARA
+===================================================== */
+
+function updateCamera(){
+
+    camera.rotation.order="YXZ";
+
+    camera.rotation.y=yaw;
+    camera.rotation.x=pitch;
+    camera.rotation.z=0;
+}
+
+/* =====================================================
+   MOVIMIENTO
+===================================================== */
+
+const movement =
+    new THREE.Vector3();
+
+function moveDesktop(delta){
+
+    if(!locked)
+        return;
+
+    let forward=0;
+    let side=0;
+
+    if(keys["KeyW"])
+        forward+=1;
+
+    if(keys["KeyS"])
+        forward-=1;
+
+    if(keys["KeyA"])
+        side-=1;
+
+    if(keys["KeyD"])
+        side+=1;
+
+    if(
+        forward===0 &&
+        side===0
+    )
+        return;
+
+    movement.set(
+        side,
+        0,
+        -forward
+    );
+
+    movement.normalize();
+
+    movement.applyAxisAngle(
+        new THREE.Vector3(0,1,0),
+        yaw
+    );
+
+    camera.position.x +=
+        movement.x*2.1*delta;
+
+    camera.position.z +=
+        movement.z*2.1*delta;
+
+    clampPosition();
+}
+
+/* =====================================================
+   JOYSTICK
+===================================================== */
+
+const joystick =
+    document.getElementById("joystick");
+
+const knob =
+    document.getElementById("knob");
+
+let joyX=0;
+let joyY=0;
+let joyPointer=null;
+
+function joystickUpdate(e){
+
+    const r=
+        joystick.getBoundingClientRect();
+
+    let x=
+        e.clientX-
+        (r.left+r.width/2);
+
+    let y=
+        e.clientY-
+        (r.top+r.height/2);
+
+    const max=43;
+
+    const distance=
+        Math.sqrt(x*x+y*y);
+
+    if(distance>max){
+
+        x=x/distance*max;
+        y=y/distance*max;
+
+    }
+
+    joyX=x/max;
+    joyY=y/max;
+
+    knob.style.left=
+        (32+x)+"px";
+
+    knob.style.top=
+        (32+y)+"px";
+}
+
+function joystickReset(){
+
+    joyX=0;
+    joyY=0;
+
+    knob.style.left="32px";
+    knob.style.top="32px";
+
+    joyPointer=null;
+}
+
+joystick.addEventListener(
+    "pointerdown",
+    e=>{
+
+        e.preventDefault();
+
+        joyPointer=e.pointerId;
+
+        joystick.setPointerCapture(
+            e.pointerId
+        );
+
+        joystickUpdate(e);
+
+    }
+);
+
+joystick.addEventListener(
+    "pointermove",
+    e=>{
+
+        if(
+            e.pointerId===
+            joyPointer
+        ){
+            joystickUpdate(e);
+        }
+
+    }
+);
+
+joystick.addEventListener(
+    "pointerup",
+    joystickReset
+);
+
+joystick.addEventListener(
+    "pointercancel",
+    joystickReset
+);
+
+/* =====================================================
+   MIRAR CON EL DEDO
+===================================================== */
+
+const look=
+    document.getElementById("look");
+
+let lookPointer=null;
+let lastX=0;
+let lastY=0;
+
+look.addEventListener(
+    "pointerdown",
+    e=>{
+
+        e.preventDefault();
+
+        lookPointer=e.pointerId;
+
+        look.setPointerCapture(
+            e.pointerId
+        );
+
+        lastX=e.clientX;
+        lastY=e.clientY;
+
+    }
+);
+
+look.addEventListener(
+    "pointermove",
+    e=>{
+
+        if(
+            e.pointerId!==
+            lookPointer
+        )
+            return;
+
+        const dx=
+            e.clientX-lastX;
+
+        const dy=
+            e.clientY-lastY;
+
+        lastX=e.clientX;
+        lastY=e.clientY;
+
+        yaw-=dx*.0045;
+        pitch-=dy*.0045;
+
+        pitch=
+            THREE.MathUtils.clamp(
+                pitch,
+                -1.25,
+                1.25
+            );
+
+        updateCamera();
+
+    }
+);
+
+look.addEventListener(
+    "pointerup",
+    ()=>{
+        lookPointer=null;
+    }
+);
+
+look.addEventListener(
+    "pointercancel",
+    ()=>{
+        lookPointer=null;
+    }
+);
+
+/* =====================================================
+   MOVIMIENTO MÓVIL
+===================================================== */
+
+function moveMobile(delta){
+
+    if(
+        Math.abs(joyX)<.05 &&
+        Math.abs(joyY)<.05
+    )
+        return;
+
+    /*
+       Importante:
+       joystick arriba = avanzar
+       joystick abajo = retroceder
+       izquierda = izquierda
+       derecha = derecha
+    */
+
+    const forward=-joyY;
+    const side=joyX;
+
+    movement.set(
+        side,
+        0,
+        -forward
+    );
+
+    movement.normalize();
+
+    movement.applyAxisAngle(
+        new THREE.Vector3(0,1,0),
+        yaw
+    );
+
+    camera.position.x +=
+        movement.x*2.0*delta;
+
+    camera.position.z +=
+        movement.z*2.0*delta;
+
+    clampPosition();
+}
+
+/* =====================================================
+   LÍMITES
+===================================================== */
+
+function clampPosition(){
+
+    camera.position.x=
+        THREE.MathUtils.clamp(
+            camera.position.x,
+            -3.35,
+            3.35
+        );
+
+    camera.position.z=
+        THREE.MathUtils.clamp(
+            camera.position.z,
+            -1.15,
+            2.55
+        );
+
+    camera.position.y=1.60;
+}
+
+/* =====================================================
+   BOTÓN USAR
+===================================================== */
+
+document
+    .getElementById("useButton")
+    .addEventListener(
+        "pointerdown",
+        e=>{
+            e.preventDefault();
+            interact();
+        }
+    );
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect=
+            window.innerWidth/
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+    }
+);
+
+/* =====================================================
+   INICIO
+===================================================== */
+
+updateCamera();
+
+/* =====================================================
+   LOOP
+===================================================== */
+
+const clock=
+    new THREE.Clock();
+
+function animate(){
+
+    requestAnimationFrame(animate);
+
+    const delta=
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
+
+    if(window.innerWidth>900)
+        moveDesktop(delta);
+    else
+        moveMobile(delta);
+
+    findInteractive();
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
